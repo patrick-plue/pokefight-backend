@@ -1,5 +1,3 @@
-const express = require('express');
-const fs = require('fs');
 let jsonData = require('../../pokedex.json');
 
 const getAllPokemon = (req, res) => {
