@@ -5,7 +5,11 @@ const cors = require('cors');
 
 // middlewares
 app.use(express.json());
-app.use(cors());
+app.use(
+  cors({
+    origin: 'http://localhost:3000',
+  })
+);
 
 // config
 const port = process.env.PORT || 8000;
