@@ -16,7 +16,29 @@ app.use(
     origin: 'http://localhost:3000',
   })
 );
-// MongoDB Post for highscore, check if ID of pokemon exists in database if not create new entry, else update entry
+
+// ** === get all highscores === **
+
+app.get('/highscore', (req, res) => {
+  Highscore.find({}, (err, highscore) => {
+    if (err) {
+      res.send(err);
+    }
+    res.json(highscore);
+  });
+});
+
+// find highscore by id
+app.get('/highscore/:id', (req, res) => {
+  Highscore.findById(req.params.id, (err, highscore) => {
+    if (err) {
+      res.send(err);
+    }
+    res.json(highscore);
+  });
+});
+
+//** === add highscore to DB === **
 
 app.post('/highscore', (req, res) => {
   Highscore.create({
@@ -26,6 +48,33 @@ app.post('/highscore', (req, res) => {
     wongames: req.body.wongames,
     lostgames: req.body.lostgames,
   }).then((highscore) => res.send(highscore));
+});
+
+//** === update highscore === **
+
+app.put('/highscore/:id', (req, res) => {
+  Highscore.findOneAndUpdate(
+    { id: req.params.id },
+    { $set: req.body },
+    { new: true },
+    (err, highscore) => {
+      if (err) {
+        res.send(err);
+      }
+      res.json(highscore);
+    }
+  );
+});
+
+//*todo: delete highscore from DB, only for admin
+
+app.delete('/highscore/:id', (req, res) => {
+  Highscore.findOneAndDelete({ id: req.params.id }, (err, highscore) => {
+    if (err) {
+      res.send(err);
+    }
+    res.json(highscore);
+  });
 });
 
 // config
