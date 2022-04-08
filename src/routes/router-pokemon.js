@@ -5,6 +5,8 @@ const controller = require('../controller/controller-pokemon.js');
 
 router.get('/', controller.getAllPokemon);
 
+router.get('/types', controller.getDistinctTypes);
+
 router.get('/:id', controller.getPokemonById);
 
 router.get('/:id/:info', controller.getDetails);

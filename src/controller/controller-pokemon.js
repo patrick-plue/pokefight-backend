@@ -1,3 +1,4 @@
+const { json } = require('express/lib/response');
 let jsonData = require('../../pokedex.json');
 
 const getAllPokemon = (req, res) => {
@@ -24,4 +25,15 @@ const getDetails = (req, res) => {
   }
 };
 
-module.exports = { getAllPokemon, getPokemonById, getDetails };
+const getDistinctTypes = (req, res) => {
+  const typeArray = Object.values(jsonData).map((pokemon) => pokemon.type);
+  const flattenArray = typeArray.flat();
+  const uniqueTypes = [...new Set(flattenArray)];
+  res.send(uniqueTypes);
+};
+module.exports = {
+  getAllPokemon,
+  getPokemonById,
+  getDetails,
+  getDistinctTypes,
+};
