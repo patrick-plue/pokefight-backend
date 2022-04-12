@@ -28,9 +28,9 @@ app.get('/highscore', (req, res) => {
   });
 });
 
-// find highscore by id
+//*todo find highscore by id
 app.get('/highscore/:id', (req, res) => {
-  Highscore.findById(req.params.id, (err, highscore) => {
+  Highscore.find({ id: req.params.id }, (err, highscore) => {
     if (err) {
       res.send(err);
     }
@@ -39,16 +39,55 @@ app.get('/highscore/:id', (req, res) => {
 });
 
 //** === add highscore to DB === **
+// add a if logic to check if the id is already in the DB, if it is in the database use Highscore.findOneAndUpdate()
 
 app.post('/highscore', (req, res) => {
-  Highscore.create({
-    id: req.body.id,
-    name: req.body.name,
-    playedgames: req.body.playedgames,
-    wongames: req.body.wongames,
-    lostgames: req.body.lostgames,
-  }).then((highscore) => res.send(highscore));
+
+  // add a if logic to check if the id is already in the DB, if it is in the database use Highscore.findOneAndUpdate()
+  Highscore.findOne({ id: req.body.id }, (err, highscore) => {
+    if (err) {
+      res.send(err);
+    }
+    if (highscore) {
+      Highscore.findOneAndUpdate(
+        { id: req.body.id },
+        { $set: { score: req.body.score } },
+        { new: true },
+        (err, highscore) => {
+          if (err) {
+            res.send(err);
+          } else {
+            res.json(highscore);
+          }
+        }
+      );
+    } else {
+      const newHighscore = new Highscore({
+        id: req.body.id,
+        score: req.body.score,
+      });
+      newHighscore.save((err, highscore) => {
+        if (err) {
+          res.send(err);
+        }
+        res.json(highscore);
+      });
+    }
+  });
 });
+
+
+
+
+
+//   Highscore.create({
+//     id: req.body.id,
+//     name: req.body.name,
+//     playedgames: req.body.playedgames,
+//     wongames: req.body.wongames,
+//     lostgames: req.body.lostgames,
+//   }).then((highscore) => res.send(highscore));
+// });
 
 //** === update highscore === **
 
@@ -66,7 +105,7 @@ app.put('/highscore/:id', (req, res) => {
   );
 });
 
-//*todo: delete highscore from DB, only for admin
+//** === delete highscore from DB, only for admin === **
 
 app.delete('/highscore/:id', (req, res) => {
   Highscore.findOneAndDelete({ id: req.params.id }, (err, highscore) => {
