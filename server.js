@@ -41,45 +41,7 @@ app.get('/highscore/:id', (req, res) => {
 //** === add highscore to DB === **
 // add a if logic to check if the id is already in the DB, if it is in the database use Highscore.findOneAndUpdate()
 
-app.post('/highscore', (req, res) => {
-
-  // add a if logic to check if the id is already in the DB, if it is in the database use Highscore.findOneAndUpdate()
-  Highscore.findOne({ id: req.body.id }, (err, highscore) => {
-    if (err) {
-      res.send(err);
-    }
-    if (highscore) {
-      Highscore.findOneAndUpdate(
-        { id: req.body.id },
-        { $set: { score: req.body.score } },
-        { new: true },
-        (err, highscore) => {
-          if (err) {
-            res.send(err);
-          } else {
-            res.json(highscore);
-          }
-        }
-      );
-    } else {
-      const newHighscore = new Highscore({
-        id: req.body.id,
-        score: req.body.score,
-      });
-      newHighscore.save((err, highscore) => {
-        if (err) {
-          res.send(err);
-        }
-        res.json(highscore);
-      });
-    }
-  });
-});
-
-
-
-
-
+// app.post('/highscore', (req, res) => {
 //   Highscore.create({
 //     id: req.body.id,
 //     name: req.body.name,
@@ -91,11 +53,22 @@ app.post('/highscore', (req, res) => {
 
 //** === update highscore === **
 
-app.put('/highscore/:id', (req, res) => {
+app.put('/highscore/:id/won', (req, res) => {
   Highscore.findOneAndUpdate(
     { id: req.params.id },
-    { $set: req.body },
-    { new: true },
+    {
+      $set: {
+        id: req.params.id,
+        name: req.body.name,
+        // lostgames: req.body.lostgames,
+        // $setOnInsert: {
+        //   playedgames: 0,
+        //   wongames: 0,
+        // },
+      },
+      $inc: { playedgames: 1, wongames: 1 },
+    },
+    { new: true, upsert: true },
     (err, highscore) => {
       if (err) {
         res.send(err);
@@ -104,6 +77,32 @@ app.put('/highscore/:id', (req, res) => {
     }
   );
 });
+
+app.put('/highscore/:id/lost', (req, res) => {
+  Highscore.findOneAndUpdate(
+    { id: req.params.id },
+    {
+      $set: {
+        id: req.params.id,
+        name: req.body.name,
+        // lostgames: req.body.lostgames,
+        // $setOnInsert: {
+        //   playedgames: 0,
+        //   wongames: 0,
+        // },
+      },
+      $inc: { playedgames: 1, lostgames: 1 },
+    },
+    { new: true, upsert: true },
+    (err, highscore) => {
+      if (err) {
+        res.send(err);
+      }
+      res.json(highscore);
+    }
+  );
+});
+// { $inc: { <field1>: <amount1>, <field2>: <amount2>, ... } }
 
 //** === delete highscore from DB, only for admin === **
 
