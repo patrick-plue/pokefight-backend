@@ -28,7 +28,7 @@ app.get('/highscore', (req, res) => {
   });
 });
 
-//*todo find highscore by id
+//* find highscore by id
 app.get('/highscore/:id', (req, res) => {
   Highscore.find({ id: req.params.id }, (err, highscore) => {
     if (err) {
@@ -38,20 +38,7 @@ app.get('/highscore/:id', (req, res) => {
   });
 });
 
-//** === add highscore to DB === **
-// add a if logic to check if the id is already in the DB, if it is in the database use Highscore.findOneAndUpdate()
-
-// app.post('/highscore', (req, res) => {
-//   Highscore.create({
-//     id: req.body.id,
-//     name: req.body.name,
-//     playedgames: req.body.playedgames,
-//     wongames: req.body.wongames,
-//     lostgames: req.body.lostgames,
-//   }).then((highscore) => res.send(highscore));
-// });
-
-//** === update highscore === **
+//** === Add or update highscore === **
 
 app.put('/highscore/:id/won', (req, res) => {
   Highscore.findOneAndUpdate(
@@ -60,11 +47,6 @@ app.put('/highscore/:id/won', (req, res) => {
       $set: {
         id: req.params.id,
         name: req.body.name,
-        // lostgames: req.body.lostgames,
-        // $setOnInsert: {
-        //   playedgames: 0,
-        //   wongames: 0,
-        // },
       },
       $inc: { playedgames: 1, wongames: 1 },
     },
@@ -85,11 +67,6 @@ app.put('/highscore/:id/lost', (req, res) => {
       $set: {
         id: req.params.id,
         name: req.body.name,
-        // lostgames: req.body.lostgames,
-        // $setOnInsert: {
-        //   playedgames: 0,
-        //   wongames: 0,
-        // },
       },
       $inc: { playedgames: 1, lostgames: 1 },
     },
@@ -102,7 +79,6 @@ app.put('/highscore/:id/lost', (req, res) => {
     }
   );
 });
-// { $inc: { <field1>: <amount1>, <field2>: <amount2>, ... } }
 
 //** === delete highscore from DB, only for admin === **
 
