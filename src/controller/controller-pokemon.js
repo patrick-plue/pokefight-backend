@@ -1,6 +1,7 @@
 const { json } = require('express/lib/response');
 let jsonData = require('../../pokedex.json');
-const Highscore = require('./models/highscoreSchema');
+
+const Highscore = require('../../models/highscoreSchema');
 
 const getAllPokemon = (req, res) => {
   res.send(jsonData);
@@ -33,7 +34,7 @@ const getDistinctTypes = (req, res) => {
   res.send(uniqueTypes);
 };
 
-// Highscore
+//! Highscore
 const getHighscore = (req, res) => {
   Highscore.find({}, (err, highscore) => {
     if (err) {
