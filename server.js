@@ -10,11 +10,18 @@ mongoose.connect(process.env.MONGO_URL);
 
 // middlewares
 app.use(express.json());
-app.use(
-  cors({
-    origin: ['https://pokemon-duel.netlify.app/', 'http://localhost:3000'],
-  })
-);
+app.use(cors(corsOptions));
+
+let whitelist = ['https://pokemon-duel.netlify.app/', 'http://localhost:3000'];
+let corsOptions = {
+  origin: function (origin, callback) {
+    if (whitelist.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+};
 
 // config
 const port = process.env.PORT || 8000;
